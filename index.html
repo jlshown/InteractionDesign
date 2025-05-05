@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interaction Design Influences</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        #diagram-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #c1d37d; /* Tailwind's greenlight*/
+        }
+        #main-circle {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background-color: #3b109b; /* Tailwind's purple */
+            color: #e96565;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2em;
+            text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1); /* Tailwind's shadow-md */
+        }
+        .outer-circle {
+            position: absolute;
+            width: 300px; /* Increased size */
+            height: 300px; /* Increased size */
+            border-radius: 50%;
+            /*border: 2px dashed #9ca3af; !* Tailwind's gray-400 *!*/ /* Removed border, looked cluttered */
+            top: -50px; /* Adjusted position to contain larger circle */
+            left: -50px;
+        }
+
+        .point {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #19a037; /* Tailwind's gray-300 */
+            border-radius: 50%;
+            top: 0;
+            left: 0;
+        }
+
+        .label {
+            position: absolute;
+            /*background-color: white;  Removed background, makes text blend better */
+            padding: 0.25rem 0.5rem; /* Tailwind's px-2 py-1 */
+            border-radius: 0.375rem; /* Tailwind's rounded-md */
+            font-size: 0.9rem; /* Tailwind's text-sm */
+            color: #312ae0; /* Tailwind's violet purple */
+            white-space: nowrap;
+            pointer-events: auto; /* Allows pointer events */
+            opacity: 0;
+            transition: opacity 0.2s ease-in-out;
+            z-index: 10; /* Ensure labels are above lines */
+        }
+
+      .label:hover {
+            opacity: 1;
+            background-color: rgba(224, 228, 201, 0.77); /* Light background on hover */
+        }
+
+        .connection {
+            position: absolute;
+            border-top: 1px solid #0d3e93; /* Tailwind's gray-400 */
+            /*background-color: #f3f4f6;  Makes lines invisible */
+            z-index: 1;
+        }
+
+    </style>
+</head>
+<body class="bg-gray-100 font-sans antialiased">
+    <div id="diagram-container">
+        <div class="relative">
+            <div id="main-circle" class="shadow-md">Interaction Design</div>
+            <div class="outer-circle"></div>
+            </div>
+    </div>
+    <script>
+        const container = document.querySelector('.relative');
+        const mainCircle = document.getElementById('main-circle');
+        const outerCircle = document.querySelector('.outer-circle');
+
+        const labels = [
+            'Ergonomics', 'Psychology', 'Cognitive Science', 'Design', 'Informatics', 'Engineering',
+            'Computer Science', 'Software Engineering', 'Ubiquitous Computing', 'Social Sciences',
+            'Human Factors', 'Cognitive Engineering', 'Human Computer Interaction', 'Cognitive Economics',
+            'Computer-supported Cooperative Work', 'Information Systems', 'Film Industry', 'Industrial Design',
+            'Game Design', 'Product Design', 'Graphic Design'
+        ];
+
+        const numLabels = labels.length;
+        const radius = 150; // Increased radius to match .outer-circle size
+        const center_x = container.offsetLeft + mainCircle.offsetWidth / 2;
+        const center_y = container.offsetTop + mainCircle.offsetHeight / 2;
+
+        for (let i = 0; i < numLabels; i++) {
+            const angle = (i / numLabels) * 2 * Math.PI - Math.PI / 2; // Start from top
+            const x = center_x + radius * Math.cos(angle);
+            const y = center_y + radius * Math.sin(angle);
+
+            const point = document.createElement('div');
+            point.className = 'point';
+            point.style.left = `${x - 5}px`; // Adjusted for point radius
+            point.style.top = `${y - 5}px`;
+
+            const label = document.createElement('div');
+            label.className = 'label';
+            label.textContent = labels[i];
+            label.style.left = `${x + 10}px`; // Adjusted for point radius and to move label away from point.
+            label.style.top = `${y - 5}px`;
+             label.style.transformOrigin = '0 0'; // Important for rotation
+
+            // Calculate angle for the label rotation
+            const labelAngle = (i / numLabels) * 360 - 90;  // Start from top, adjust as needed
+            label.style.transform = `rotate(${labelAngle}deg)`;
+
+            const connection = document.createElement('div');
+            connection.className = 'connection';
+            const dx = x - center_x;
+            const dy = y - center_y;
+            const length = Math.sqrt(dx * dx + dy * dy);
+            connection.style.width = `${length}px`;
+            connection.style.left = `${center_x}px`;
+            connection.style.top = `${center_y}px`;
+            const connectionAngle = Math.atan2(dy, dx) * 180 / Math.PI;
+            connection.style.transform = `rotate(${connectionAngle}deg)`;
+
+            container.appendChild(point);
+            container.appendChild(connection);
+            container.appendChild(label);
+        }
+    </script>
+</body>
+</html>
